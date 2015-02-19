@@ -1,6 +1,10 @@
 # pw-animate-js
 
+pw-animate-js is a pretty small (html4) javascript animation library without any dependencies. It uses spritesheets and focuses on small size and one special feature: There are many animation-libraries out there, but few/none provide a possibility to not only set the framerate, but set the frame-time for a certain frame specifically (similar to gif-files). In pw-animate-js one provides the place and duration of every frame oneself -- it's also possible to use the same frame twice without the need to have it on the spritesheet twice.
 
+The library was created for a small private project and raises no claim for completeness -- as in that project there were used pretty low-framerate animations due to low hardware-performance (TV), the feature was needed to not have to put the same frame more than one time in the same spritesheet (just because it was shown for a longer duration). Html5 wasn't available.
+
+If you think it's useful for you, feel free to use it. If you think it should provide certain additional features, feel free to comment or fork / create pull requests.
 
 #License
 
