@@ -38,11 +38,13 @@ var pwanimate = (new function() {
      * Creates a new frame-object
      * @class
      * @param {Object.<string, object>} frameSettings
+     * @param {Object} animation
      */
-    this.frame = function(frameSettings) {
-      this.x = '-' + frameSettings.x;
-      this.y = '-' + frameSettings.y;
-      this.timeout = frameSettings.timeout;
+    this.frame = function(frameSettings, animation) {
+      var framesX = Math.floor(animation.width / animation.frameWidth);
+      this.x = '-' + ((frameSettings.f % framesX) * animation.frameWidth) + 'px';
+      this.y = '-' + (Math.floor(frameSettings.f / framesX) * animation.frameHeight) + 'px';
+      this.timeout = frameSettings.t;
     };
     
     //
@@ -53,13 +55,15 @@ var pwanimate = (new function() {
     this.image = settings.image;
     this.width = settings.width;
     this.height = settings.height;
-    this.frames = (function(frameClass) {
+    this.frameWidth = settings.frameWidth;
+    this.frameHeight = settings.frameHeight;
+    this.frames = (function(animation) {
       var array = [];
       settings.frames.forEach(function(frameSettings) {
-        array.push(new frameClass(frameSettings));
+        array.push(new animation.frame(frameSettings, animation));
       });
       return array;
-    }(this.frame));
+    }(this));
     
     //    
     
@@ -69,8 +73,8 @@ var pwanimate = (new function() {
     this.start = function() {
       var e = this.element;
       e.style.backgroundImage =  "url(" + this.image + ")";
-      e.style.width = this.width;
-      e.style.height = this.height;
+      e.style.width = this.frameWidth + 'px';
+      e.style.height = this.frameHeight + 'px';
       this.startFrame(0);
     };
     

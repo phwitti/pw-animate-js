@@ -9,22 +9,24 @@
     <script type="application/javascript">
       (function() {
         pwanimate.animate({
-         'element': document.getElementById('animation'),
-         'image': 'example.png',
-         'width':'64px',
-         'height':'64px',
-         'frames':[
-           {'x':'0px', 'y':'0px', 'timeout':1000},
-           {'x':'64px', 'y':'0px', 'timeout':250},
-           {'x':'128px', 'y':'0px', 'timeout':250},
-           {'x':'0px', 'y':'64px', 'timeout':250},
-           {'x':'64px', 'y':'64px', 'timeout':250},
-           {'x':'128px', 'y':'64px', 'timeout':1000},
-           {'x':'64px', 'y':'64px', 'timeout':50},
-           {'x':'0px', 'y':'64px', 'timeout':50},
-           {'x':'128px', 'y':'0px', 'timeout':50},
-           {'x':'64px', 'y':'0px', 'timeout':50}
-         ]
+          'element': document.getElementById('animation'),
+          'image': 'example.png',
+          'width':192,
+          'height':128,
+          'frameWidth':64,
+          'frameHeight':64,
+          'frames':[
+            {'f':0, 't':1000},
+            {'f':1, 't':250},
+            {'f':2, 't':250},
+            {'f':3, 't':250},
+            {'f':4, 't':250},
+            {'f':5, 't':1000},
+            {'f':4, 't':50},
+            {'f':3, 't':50},
+            {'f':2, 't':50},
+            {'f':1, 't':50}
+          ]
         });
       })();
     </script>
