@@ -1,35 +1,82 @@
+/*
+The MIT License (MIT)
 
+Copyright (c) 2015 - Philipp Wittershagen
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+/**
+ * pw-animate-js-library: 
+ */
 var pwanimate = (new function() {
+  
+  /**
+   * Creates a new animation-object
+   * @class
+   * @param {Object.<string, object>} settings
+   */
   this.animation = function(settings) {
-    this.frame = function(framesettings) {
-      this.x = '-' + framesettings.x;
-      this.y = '-' + framesettings.y;
-      this.timeout = framesettings.timeout;
+    
+    /**
+     * Creates a new frame-object
+     * @class
+     * @param {Object.<string, object>} frameSettings
+     */
+    this.frame = function(frameSettings) {
+      this.x = '-' + frameSettings.x;
+      this.y = '-' + frameSettings.y;
+      this.timeout = frameSettings.timeout;
     };
     
-    this.currentframe = 0;
+    //
+    
+    this.currentFrame = 0;
     this.timer = 0;
     this.element = settings.element;
     this.image = settings.image;
     this.width = settings.width;
     this.height = settings.height;
-    this.frames = (function(Frame) {
+    this.frames = (function(frameClass) {
       var array = [];
-      settings.frames.forEach(function(frame) {
-        array.push(new Frame(frame));
+      settings.frames.forEach(function(frameSettings) {
+        array.push(new frameClass(frameSettings));
       });
       return array;
     }(this.frame));
     
+    //    
     
+    /**
+     * Starts the animation
+     */
     this.start = function() {
       var e = this.element;
       e.style.backgroundImage =  "url(" + this.image + ")";
       e.style.width = this.width;
       e.style.height = this.height;
-      this.frame(0);
+      this.startFrame(0);
     };
     
+    /**
+     * Pauses the animation
+     */
     this.pause = function() {
       if (this.timer) {
         clearTimeout(this.timer);
@@ -37,24 +84,41 @@ var pwanimate = (new function() {
       this.timer = 0;
     };
     
+    /**
+     * Unpauses the animation
+     */
     this.unpause = function() {
       if (!this.timer) {
-        this.frame(this.currentframe);
+        this.startFrame(this.currentFrame);
       }
     };
     
-    this.setframe = function(i) {
-      this.currentframe = i;
+    /**
+     * Set a certain frame, without changing the timer 
+     *  -- call pause beforehand to use this in a sensible way
+     * @param {Number} i - The number of the frame
+     */
+    this.setFrame = function(i) {
+      this.currentFrame = i;
       this.element.style.backgroundPosition = this.frames[i].x + " " + this.frames[i].y;
     };
     
-    this.frame = function(i) {
-      this.setframe(i);
-      var animation_object = this;
-      this.timer = setTimeout(function() { animation_object.nextframe(); }, this.frames[i].timeout);
+    /**
+     * Set a certain frame, and start its timer 
+     *  -- call pause before using this
+     * @param {Number} i - The number of the frame
+     */
+    this.startFrame = function(i) {
+      this.setFrame(i);
+      var animationObject = this;
+      this.timer = setTimeout(function() { animationObject.nextFrame(); }, this.frames[i].timeout);
     };
     
-    this.nextframe = function() {
+    /**
+     * Proceed with the the next frame, and start its timer
+     *  -- call pause before using this
+     */
+    this.nextFrame = function() {
       var wrap = function(i, length) {
         if (i === length) {
           return 0;
@@ -62,76 +126,18 @@ var pwanimate = (new function() {
           return i;
         }
       };
-      this.frame(wrap(this.currentframe + 1, this.frames.length));
+      this.startFrame(wrap(this.currentFrame + 1, this.frames.length));
     };
   };
   
-  this.position = function(settings) {
-    this.frame = function(framesettings) {
-      this.x = framesettings.x;
-      this.y = framesettings.y;
-      this.timeout = framesettings.timeout;
-    };
-    
-    this.currentframe = 0;
-    this.timer = 0;
-    this.element = settings.element;
-    this.frames = (function(Frame) {
-      var array = [];
-      settings.frames.forEach(function(frame) {
-        array.push(new Frame(frame));
-      });
-      return array;
-    }(this.frame));
-    
-    
-    this.start = function() {
-      this.frame(0);
-    };
-    
-    this.pause = function() {
-      if (this.timer) {
-        clearTimeout(this.timer);
-      }
-      this.timer = 0;
-    };
-    
-    this.unpause = function() {
-      if (!this.timer) {
-        this.frame(this.currentframe);
-      }
-    };
-    
-    this.setframe = function(i) {
-      this.currentframe = i;
-      var e = this.element;
-      e.style.left = this.frames[i].x;
-      e.style.top = this.frames[i].y;
-    };
-    
-    this.frame = function(i) {
-      this.setframe(i);
-      var animation_object = this;
-      this.timer = setTimeout(function() { animation_object.nextframe(); }, this.frames[i].timeout);
-    };
-    
-    this.nextframe = function() {
-      var wrap = function(i, length) {
-        if (i === length) {
-          return 0;
-        } else {
-          return i;
-        }
-      };
-      this.frame(wrap(this.currentframe + 1, this.frames.length));
-    };
-  };
+  //
   
-  this.animations = [];
-  
+  /**
+   * Creates a new animation-object, starts it and returns it
+   * @param {Object.<string, object>} settings
+   */
   this.animate = function(settings) {
-    var animation = (settings.type === 'position') ? (new this.position(settings)) : (new this.animation(settings));
-    this.animations.push(animation);
+    var animation = new this.animation(settings);
     animation.start();
     return animation;
   };
